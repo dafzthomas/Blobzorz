@@ -477,10 +477,6 @@ function Health(){
 }
 
 function level2(){
-	canvas = document.getElementById("canvas");
-    context = canvas.getContext("2d");
-    playerBullets = [];
-    enemyBullets = [];
     game = true;
 
 	var background = new Rectangle({
@@ -571,30 +567,7 @@ function level2(){
 		radius: 25
 	});
 
-	player = new Player({
-		context: context,
-		x: canvas.width/2,
-		y: 550,
-		radius: 25
-	});
-
-	scene = {
-		stage: [],
-		clear: function (canvas, context) {
-			context.clearRect(0, 0, canvas.width, canvas.height);
-		},
-		draw: function (canvas, context) {
-			scene.clear(canvas, context);
-
-			for (var i = 0; i < scene.stage.length; i++) {
-				scene.stage[i].draw();
-			}
-		}
-	};
-
 	scene.stage.push(
-		background,
-		player,
 		enemy1,
 		enemy2,
 		enemy3,
@@ -607,16 +580,9 @@ function level2(){
 	);
 
 	enemies = [enemy1, enemy2, enemy3, enemy4, enemy5, enemy6, enemy7];
-
-
 }
 
 function level3(){
-	canvas = document.getElementById("canvas");
-    context = canvas.getContext("2d");
-    keys = {};
-    playerBullets = [];
-    enemyBullets = [];
     game = true;
     bossHit = 0;
 
@@ -717,30 +683,7 @@ function level3(){
 		radius: 80
 	});
 
-	player = new Player({
-		context: context,
-		x: canvas.width/2,
-		y: 550,
-		radius: 25
-	});
-
-	scene = {
-		stage: [],
-		clear: function (canvas, context) {
-			context.clearRect(0, 0, canvas.width, canvas.height);
-		},
-		draw: function (canvas, context) {
-			scene.clear(canvas, context);
-
-			for (var i = 0; i < scene.stage.length; i++) {
-				scene.stage[i].draw();
-			}
-		}
-	};
-
 	scene.stage.push(
-		background,
-		player,
 		enemy1,
 		enemy2,
 		enemy3,
@@ -754,12 +697,6 @@ function level3(){
 	);
 
 	enemies = [enemy1, enemy2, enemy3, enemy4, enemy5, enemy6, enemy7, boss];
-
-	game = true;
-
-	if(!request) {
-		gameLoop();
-	}
 }
 
 function Win(){
@@ -990,10 +927,10 @@ function gameLoop(){
 		playerHit();
 		enemyHit();
 		if(enemiesKilled >= 7 && theLevel == 0){
-			level2();
+			setTimeout(level2, 2000);
 			theLevel++;
 		} else if(enemiesKilled >= 14 && theLevel == 1){
-			level3();
+			setTimeout(level3, 2000);
 			theLevel++;
 		} else if(enemiesKilled >= 22 && theLevel == 2){
 			Win();
@@ -1143,7 +1080,6 @@ function enemyHit(){
 					if(health < 80){
 						health = health + 8;
 					}
-					console.log("Enemies Killed: " + enemiesKilled);
 					playerScore += 10;
 				} else if(enemies[i].type == 'boss' && collision(enemies[i], playerBullets[a])){
 					if(bossHit < 30){
@@ -1159,7 +1095,6 @@ function enemyHit(){
 						scene.stage.splice(scene.stage.indexOf(playerBullets[a]), 1);
 						playerBullets.splice(a, 1);
 						enemiesKilled++;
-						console.log("Enemies Killed: " + enemiesKilled);
 						playerScore += 50;
 					}
 				}
@@ -1207,7 +1142,6 @@ function enemyShoot(){
 function playerShoot(){
 	if(canFire){
 		canFire = false;
-		console.log("Player Shoot");
 
 		var bullet = new Circle({
 			context: context,
@@ -1238,7 +1172,6 @@ function collision(c1, c2) {
 
 function getMousePos(canvas, evt) {
 	var rect = canvas.getBoundingClientRect();
-	console.log(evt.clientX - rect.left, evt.clientY - rect.top);
 	return {
 		x: evt.clientX - rect.left,
 		y: evt.clientY - rect.top
@@ -1265,19 +1198,16 @@ canvas.addEventListener('click', function(evt) {
 	if(mousePos.x > 422 && mousePos.x < 570 && mousePos.y > 352 && mousePos.y < 406){
 		if(!game){
 			if(mainMenu){
-				console.log("Starting?");
 				window.cancelAnimFrame(request);
 				request = false;
 
 				Start();
 			} else if(hasWon){
-				console.log("Starting?");
 				window.cancelAnimFrame(request);
 				request = false;
 
 				MainMenu();
 			} else if(hasLost){
-				console.log("Starting?");
 				window.cancelAnimFrame(request);
 				request = false;
 
