@@ -1,29 +1,17 @@
-/*globals pick, canvas, context, console */
-
-// Pick a value - return a if it is defined, else default to b
-// e.g. var colour = pick( params.colour, 'red' );
-function pick(a, b) {
-	'use strict';
-
-	if (typeof a !== 'undefined') {
-		return a;
-	} else {
-		return b;
-	}
-}
+/*globals canvas, context, console */
 
 // Drawable Super Class
 function Drawable(params) {
 	'use strict';
 
 	// Common Properties
-	this.x = pick(params.x, 0);
-	this.y = pick(params.y, 0);
-	this.fillColour = pick(params.fillColour, '#000');
-	this.strokeColour = pick(params.strokeColour, 'transparent');
-	this.strokeWidth = pick(params.strokeWidth, 0);
-	this.context = pick(params.context, null);
-    this.animations = pick(params.animations, {});
+	this.x = params.x || 0;
+	this.y = params.y || 0;
+	this.fillColour = params.fillColour || '#000';
+	this.strokeColour = params.strokeColour || 'transparent';
+	this.strokeWidth = params.strokeWidth || 0;
+	this.context = params.context || null;
+    this.animations = params.animations || {};
 
 	// Draw
 	this.draw = function () {
@@ -51,7 +39,7 @@ function Drawable(params) {
 		}
 
 		var changePerSecond = pick(params.changePerSecond, 1),
-			wholeNumbersOnly = pick(params.wholeNumbersOnly, false);
+			wholeNumbersOnly = params.wholeNumbersOnly || false;
 
 		// Remove any existing animations
         this.removeAnimation(params.property);
@@ -76,8 +64,8 @@ function Drawable(params) {
 		}
 
 
-		var totalTimeSeconds = pick(params.totalTimeSeconds, 1),
-			wholeNumbersOnly = pick(params.wholeNumbersOnly, false),
+		var totalTimeSeconds = params.totalTimeSeconds || 1,
+			wholeNumbersOnly = params.wholeNumbersOnly || false,
 			// What time did the animation start, and what time should it end?
 			animationStart = Date.now(),
 			animationEnd = animationStart + (totalTimeSeconds * 1000),
@@ -103,29 +91,26 @@ function Drawable(params) {
 
 	// Apply animations, knowing how many seconds have elapsed since last time.
 	this.applyAnimations = function (secondsElapsed) {
+		var self = this,
+            property,
+			animation,
+            changeBy,
+            valueRange,
+            timeRange,
+            timeSinceStarted,
+            currentTimePosition,
+            currentValue;
 
-		// Moved variable declarations here to satisfy JSHint
-		var property, animation, changeBy, valueRange, timeRange, timeSinceStarted, currentTimePosition, currentValue;
+		for (property in self.animations) {
+			if (self.animations.hasOwnProperty(property)) {
+				animation = self.animations[property];
 
-		// A for-in loop - loop over all properties in an object
-		// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...in
-		for (property in this.animations) {
-
-			// When using a for-in loop, this is important
-			// http://brianflove.com/2013/09/05/javascripts-hasownproperty-method/
-			if (this.animations.hasOwnProperty(property)) {
-
-				animation = this.animations[property];
-
-				// What kind of animation is this?
 				if (animation.kind === 'changecontinuous') {
 					// Change by X amount per second
-
-					// How much should we change by? (e.g. 5 per second * 0.7 seconds elapsed = change by 3.5
 					changeBy = animation.changePerSecond * secondsElapsed;
 
 					// Apply the new value to the property
-					this[property] += changeBy;
+					self[property] += changeBy;
 
 				} else if (animation.kind === 'changetowards') {
 					// Change towards X value over Y seconds
@@ -180,7 +165,7 @@ function CompoundDrawable(params) {
 
 	// Properties of a CompoundDrawable
 	// Array of constituent parts - all Drawables
-	this.parts = pick(params.parts, []);
+	this.parts = params.parts || [];
 
 	// Draw
 	this.draw = function () {

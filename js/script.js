@@ -32,22 +32,14 @@ window.cancelAnimFrame = (function() {
 	return window.cancelAnimationFrame || window.webkitCancelAnimationFrame || window.mozCancelAnimationFrame;
 })();
 
-function pick(a, b) {
-	if (typeof a !== 'undefined') {
-		return a;
-	} else {
-		return b;
-	}
-}
-
 // Text
 function Text(params) {
 	Drawable.apply(this, arguments);
 
-	this.strokeStyle = pick(params.strokeStyle, null);
-	this.lineWidth = pick(params.lineWidth, null);
-	this.fillStyle = pick(params.fillStyle, null);
-	this.textAlign = pick(params.textAlign, null);
+	this.strokeStyle = params.strokeStyle || null;
+	this.lineWidth = params.lineWidth || null;
+	this.fillStyle = params.fillStyle || null;
+	this.textAlign = params.textAlign || null;
 
 	// Draw
 	this.draw = function() {
@@ -67,9 +59,9 @@ function Text(params) {
 function Rectangle(params) {
 	Drawable.apply(this, arguments);
 
-	this.type = pick(params.type, null);
-	this.width = pick(params.width, 100);
-	this.height = pick(params.height, 100);
+	this.type = params.type || null;
+	this.width = params.width || 100;
+	this.height = params.height || 100;
 
 	// Draw
 	this.draw = function () {
@@ -84,8 +76,8 @@ function Rectangle(params) {
 function Circle(params) {
 	Drawable.apply(this, arguments);
 
-	this.type = pick(params.type, null);
-	this.radius = pick(params.radius, 100);
+	this.type = params.type || null;
+	this.radius = params.radius || 100;
 
 	// Draw
 	this.draw = function () {
@@ -103,13 +95,13 @@ function Player(params) {
 	// Apply Drawable as a superclass
 	CompoundDrawable.apply(this, arguments);
 
-	this.radius = pick(params.radius, 20);
+	this.radius = params.radius || 20;
 
 	// "Constructor"
 	this.parts.push(
 		new Circle({
 			context: context,
-			radius: pick(params.radius, 20),
+			radius: params.radius || 20,
 			fillColour: 'pink'
 		}),
 		new Rectangle({
@@ -127,15 +119,15 @@ function Entity(params) {
 	// Apply Drawable as a superclass
 	CompoundDrawable.apply(this, arguments);
 
-	this.radius = pick(params.radius, 20);
+	this.radius = params.radius || 20;
 
-	this.type = pick(params.type, null);
+	this.type = params.type || null;
 
 	// "Constructor"
 	this.parts.push(
 		new Circle({
 			context: context,
-			radius: pick(params.radius, 20),
+			radius: params.radius || 20,
 			fillColour: 'purple'
 		}),
 		new Rectangle({
@@ -153,15 +145,15 @@ function Boss(params){
 	// Apply Drawable as a superclass
 	CompoundDrawable.apply(this, arguments);
 
-	this.radius = pick(params.radius, 20);
+	this.radius = params.radius || 20;
 
-	this.type = pick(params.type, null);
+	this.type = params.type || null;
 
 	// "Constructor"
 	this.parts.push(
 		new Circle({
 			context: context,
-			radius: pick(params.radius, 20),
+			radius: params.radius || 20,
 			fillColour: 'red'
 		}),
 		new Rectangle({
@@ -187,7 +179,7 @@ function MainMenu(){
 
 	var gameTitle = new Text({
 		context: context,
-		x: canvas.width / 2,
+		x: (canvas.width / 2),
 		y: 100,
 		font: '48px Avenir',
 		fillStyle: '#FFF',
@@ -197,7 +189,7 @@ function MainMenu(){
 
 	var instructions = new Text({
 		context: context,
-		x: canvas.width / 2,
+		x: (canvas.width / 2),
 		y: 480,
 		font: '30px Avenir',
 		fillStyle: '#FFF',
@@ -207,7 +199,7 @@ function MainMenu(){
 
 	var instructions2 = new Text({
 		context: context,
-		x: canvas.width / 2,
+		x: (canvas.width / 2),
 		y: 550,
 		font: '30px Avenir',
 		fillStyle: '#FFF',
@@ -217,7 +209,7 @@ function MainMenu(){
 
 	var begin = new Text({
 		context: context,
-		x: canvas.width / 2,
+		x: (canvas.width / 2),
 		y: 400,
 		font: '70px Avenir',
 		fillStyle: '#FFF',
@@ -1162,11 +1154,15 @@ function playerShoot(){
 }
 
 function collision(c1, c2) {
-	var a = c1.x - c2.x;
-	var b = c1.y - c2.y;
-	var c = c1.radius + c2.radius;
+	if (c1.x && c1.y && c2.x && c2.y) {
+        var a = c1.x - c2.x;
+        var b = c1.y - c2.y;
+        var c = c1.radius + c2.radius;
 
-	return (a*a + b*b <= c*c)
+        return (a*a + b*b <= c*c)
+    }
+
+    return -1;
 }
 // http://strd6.com/2010/06/circular-collision-detection-in-javascript/ Edited variables
 
@@ -1181,11 +1177,11 @@ function getMousePos(canvas, evt) {
 window.onkeydown = function(e) {
 	keys[e.which] = true;
 	e.preventDefault();
-}
+};
 
 window.onkeyup = function(e) {
 	keys[e.which] = false;
-}
+};
 
 window.setInterval(function(){
 	if(game){
