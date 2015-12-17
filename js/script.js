@@ -1161,8 +1161,6 @@ function collision(c1, c2) {
 
         return (a*a + b*b <= c*c)
     }
-
-    return -1;
 }
 // http://strd6.com/2010/06/circular-collision-detection-in-javascript/ Edited variables
 
