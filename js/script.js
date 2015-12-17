@@ -1154,7 +1154,7 @@ function playerShoot(){
 }
 
 function collision(c1, c2) {
-	if (c1.x && c1.y && c2.x && c2.y) {
+	if (c1 && c2 && c1.x && c1.y && c2.x && c2.y) {
         var a = c1.x - c2.x;
         var b = c1.y - c2.y;
         var c = c1.radius + c2.radius;
